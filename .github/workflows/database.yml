@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # -x turns off sqlcmd variable substitution. Some of the generated
+      # passwords in the data contain "$(", which sqlcmd would otherwise try to
+      # expand as a scripting variable and fail on.
       - name: Make sqlcmd available
         run: |
           docker pull -q mcr.microsoft.com/mssql-tools
@@ -35,7 +38,7 @@ jobs:
             '#!/usr/bin/env bash' \
             'exec docker run --rm --network host -v "$GITHUB_WORKSPACE":/repo \' \
             '  mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd \' \
-            '  -S localhost,1433 -U sa -P "$SA_PASSWORD" -b "$@"' \
+            '  -S localhost,1433 -U sa -P "$SA_PASSWORD" -b -x "$@"' \
             > /usr/local/bin/q
           chmod +x /usr/local/bin/q
 
