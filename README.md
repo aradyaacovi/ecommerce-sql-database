@@ -1,5 +1,9 @@
 # E-commerce SQL Database (Jewelry Store)
 
+[![database](https://github.com/aradyaacovi/ecommerce-sql-database/actions/workflows/database.yml/badge.svg)](https://github.com/aradyaacovi/ecommerce-sql-database/actions/workflows/database.yml)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-2016%2B-CC2927)](https://www.microsoft.com/sql-server)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 A relational database for an online jewelry store, built in SQL Server as the semester project for a Database Systems course (B.Sc. Industrial Engineering & Management). It was a team project: three students worked on it together.
 
 The scenario is based on the purchase flow of Zales.com, a US jewelry retailer. We studied how the site works (browsing, searching, customizing a piece, checkout) and designed a database that could support that process. The company is only the case study. This is not affiliated with Zales, and all data in the database is synthetic: the names, emails, card numbers and addresses are made up. For this public version, emails use the reserved `example.com` domain, phone numbers use the fictional 555-01xx range, and card numbers start with `0000` and are not valid card numbers.
@@ -181,6 +185,8 @@ sql/
   02_analysis_queries.sql                analysis queries (joins, nested queries, window functions, CTE)
   03_function_trigger_procedure.sql      the function, trigger and procedure as written for the assignment, plus test calls
   04_ai_query_optimization.sql           original vs. rewritten query and the EXCEPT check
+tests/
+  check_database.sql                     post-install checks run by CI
 docs/
   erd_course_submission.png              ERD drawn for the course
   powerbi/                               screenshots of the Power BI report
@@ -195,6 +201,17 @@ You need SQL Server 2016 SP1 or later (Developer or Express edition) and SQL Ser
 1. Run `sql/01_create_database_and_load_data.sql`. It drops any existing `zales` database, recreates it, loads the data, and ends with two validation queries. Expected result: 1,814 `Customized` units and 1,826 `Default` units.
 2. Run the queries in `sql/02_analysis_queries.sql` one at a time.
 3. Optionally run `sql/03_function_trigger_procedure.sql` and `sql/04_ai_query_optimization.sql`. The trigger test in `03` changes order 1.
+
+## Continuous integration
+
+Every push and pull request starts a SQL Server 2022 container, runs all four scripts
+against it in order, and then runs [`tests/check_database.sql`](tests/check_database.sql).
+That script re-checks the numbers this README publishes: 10 tables, 1,814 `Customized`
+and 1,826 `Default` units, the two-column primary key on `SEARCHES`, and the presence of
+the view, function, trigger and procedure. If the data or the schema ever stops matching
+the documentation, the build fails.
+
+See [`.github/workflows/database.yml`](.github/workflows/database.yml).
 
 ## Changes made for this repository
 

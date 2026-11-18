@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+*.sql  text
+*.py   text
+
+*.png  binary
+*.jpg  binary
+*.pbix binary
+*.xlsx binary
