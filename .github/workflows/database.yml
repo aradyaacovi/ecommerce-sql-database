@@ -1,0 +1,71 @@
+name: database
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the database and verify the data
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          # Throwaway password for a container that exists only for this run and
+          # is never reachable from outside it. Not a secret.
+          MSSQL_SA_PASSWORD: "CiOnly_Passw0rd!"
+        ports:
+          - 1433:1433
+
+    env:
+      SA_PASSWORD: "CiOnly_Passw0rd!"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # -x turns off sqlcmd variable substitution. Some of the generated
+      # passwords in the data contain "$(", which sqlcmd would otherwise try to
+      # expand as a scripting variable and fail on.
+      - name: Make sqlcmd available
+        run: |
+          docker pull -q mcr.microsoft.com/mssql-tools
+          printf '%s\n' \
+            '#!/usr/bin/env bash' \
+            'exec docker run --rm --network host -v "$GITHUB_WORKSPACE":/repo \' \
+            '  mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd \' \
+            '  -S localhost,1433 -U sa -P "$SA_PASSWORD" -b -x "$@"' \
+            > /usr/local/bin/q
+          chmod +x /usr/local/bin/q
+
+      - name: Wait for SQL Server to accept connections
+        run: |
+          for i in $(seq 1 60); do
+            if q -Q "SELECT 1" >/dev/null 2>&1; then
+              echo "SQL Server is ready after $((i * 2))s"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "SQL Server did not become ready in time" >&2
+          docker ps -a
+          exit 1
+
+      - name: Create the database and load the synthetic data
+        run: q -i /repo/sql/01_create_database_and_load_data.sql
+
+      - name: Check the schema and the published totals
+        run: q -i /repo/tests/check_database.sql
+
+      - name: Run the analysis queries
+        run: q -i /repo/sql/02_analysis_queries.sql
+
+      - name: Run the function, trigger and procedure
+        run: q -i /repo/sql/03_function_trigger_procedure.sql
+
+      - name: Run the query-rewrite equivalence check
+        run: q -i /repo/sql/04_ai_query_optimization.sql
