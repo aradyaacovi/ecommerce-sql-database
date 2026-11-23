@@ -8,6 +8,25 @@ A relational database for an online jewelry store, built in SQL Server as the se
 
 The scenario is based on the purchase flow of Zales.com, a US jewelry retailer. We studied how the site works (browsing, searching, customizing a piece, checkout) and designed a database that could support that process. The company is only the case study. This is not affiliated with Zales, and all data in the database is synthetic: the names, emails, card numbers and addresses are made up. For this public version, emails use the reserved `example.com` domain, phone numbers use the fictional 555-01xx range, and card numbers start with `0000` and are not valid card numbers.
 
+## At a glance
+
+| | |
+|---|---|
+| **Question** | Do customers buy more customized or off-the-shelf jewelry, and does it differ by category? |
+| **Stack** | SQL Server (T-SQL), Python (pandas, Faker), Power BI, GitHub Actions |
+| **My part** | Built the database (tables, keys, constraints), generated the synthetic data, wrote and ran the analysis queries. Three-person team project. |
+| **Data** | Fully synthetic: 10 tables, 1,500 orders, about 8,000 rows |
+| **Checked by CI** | A SQL Server 2022 container builds the database and re-checks the figures published below |
+
+## Findings
+
+From the synthetic data, as shown in the Power BI report. The numbers demonstrate the analysis; they say nothing about the real company.
+
+- **Customized and default sell almost equally:** 1,814 customized units against 1,826 default, out of 3,640.
+- **Categories split the other way:** rings lean customized (244 against 163 units, about 1.5 to 1), while watches lean default (308 against 236).
+- **Necklaces lead on volume** (705 units across 307 orders) and **rings trail** (407 units across 192 orders).
+- **Where a marketing team could act on it:** promote customization for rings, where buyers already choose it, and test it for watches, where most buyers take the default.
+
 ## What the database models
 
 - **Customers** who place **orders** and pay with **credit cards**
@@ -152,11 +171,11 @@ A few examples of what the queries answer:
 
 ## Power BI report
 
-We built a three-page Power BI report comparing units sold for customized and default (off-the-shelf) jewelry, with filters for state and date range. The data is synthetic, so the numbers only show that the report works. They say nothing about the real company.
+A three-page report comparing units sold for customized and default (off-the-shelf) jewelry, with filters for state and date range. The target audience is a sales and marketing manager. The data is synthetic.
 
-![Overall comparison](docs/powerbi/01_overall_comparison.png)
-
-More pages: [monthly trends](docs/powerbi/02_monthly_trends.png), [category details](docs/powerbi/03_category_details.png).
+| Overall comparison | Monthly trends | Category details |
+|---|---|---|
+| ![Overall comparison](docs/powerbi/01_overall_comparison.png) | ![Monthly trends](docs/powerbi/02_monthly_trends.png) | ![Category details](docs/powerbi/03_category_details.png) |
 
 ## Team
 
