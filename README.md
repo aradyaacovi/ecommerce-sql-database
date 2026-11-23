@@ -27,6 +27,8 @@ From the synthetic data, as shown in the Power BI report. The numbers demonstrat
 - **Necklaces lead on volume** (705 units across 307 orders) and **rings trail** (407 units across 192 orders).
 - **Where a marketing team could act on it:** promote customization for rings, where buyers already choose it, and test it for watches, where most buyers take the default.
 
+More: [business questions and answers](docs/INSIGHTS.md) · [three-step walkthrough](docs/WALKTHROUGH.md)
+
 ## What the database models
 
 - **Customers** who place **orders** and pay with **credit cards**
@@ -208,6 +210,8 @@ tests/
   check_database.sql                     post-install checks run by CI
 docs/
   erd_course_submission.png              ERD drawn for the course
+  INSIGHTS.md                            business questions and the answers from the data
+  WALKTHROUGH.md                         three-step guide to running the project
   powerbi/                               screenshots of the Power BI report
 ```
 
