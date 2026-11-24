@@ -19,3 +19,9 @@ All figures come from the synthetic data (see the Power BI report in the README 
 ## Limits
 
 The data is randomly generated, so category differences reflect how the generator and the team's loading script assigned variants, not customer behavior. The value of this analysis is the method (joins, window functions, CTEs, a report a manager can read), not the numbers.
+## What I would add next
+
+- **Test it on real data.** The generator decides the category differences, so the first step is to rerun the same queries and report on real order data and see whether the ring and watch pattern holds.
+- **Add revenue and margin.** The schema already stores a price addition per component. A measure for revenue per variant would show whether customized pieces earn more, not only sell more units.
+- **Add time and repeat purchases.** Query 3 already tracks days between a customer's orders. A monthly trend and a repeat-purchase view would turn it into a retention page in the report.
+- **Move the logic into the report.** The report is built on the database view. Rebuilding the key figures as Power BI measures (DAX) would make the dashboard reusable on new data without changing the SQL.
